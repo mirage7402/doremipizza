@@ -1,4 +1,4 @@
-![image](https://user-images.githubusercontent.com/487999/79708354-29074a80-82fa-11ea-80df-0db3962fb453.png)
+![image](https://user-images.githubusercontent.com/66579932/89150924-ab123b00-d59a-11ea-9d61-ee0d840921a8.jpg)
 
 # Pizza 배송서비스
 http://msaez.io/#/storming/AlwY0xU9WQM4n38KejdTXumIPvb2/mine/8a6aedcca07f63b4c9ac3ed3d20ebd48/-MDmlQy2CkZTJIzgMM1d

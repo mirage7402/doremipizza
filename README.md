@@ -1,11 +1,7 @@
 ![image](https://user-images.githubusercontent.com/66579932/89150924-ab123b00-d59a-11ea-9d61-ee0d840921a8.jpg)
 
-# Pizza 배송서비스
-http://msaez.io/#/storming/AlwY0xU9WQM4n38KejdTXumIPvb2/mine/8a6aedcca07f63b4c9ac3ed3d20ebd48/-MDmlQy2CkZTJIzgMM1d
-본5조 예제는 MSA/DDD/Event Storming/EDA 를 포괄하는 분석/설계/구현/운영 전단계를 커버하도록 구성한 예제입니다.
-이는 클라우드 네이티브 애플리케이션의 개발에 요구되는 체크포인트들을 통과하기 위한 예시 답안을 포함합니다.
-- 체크포인트 : https://workflowy.com/s/assessment-check-po/T5YrzcMewfo4J6LW
-
+# Pizza 주문판매 서비스
+5조의 주제는 Pizza주문 배송 서비스 입니다. 
 
 # Table of contents
 
@@ -28,14 +24,15 @@ http://msaez.io/#/storming/AlwY0xU9WQM4n38KejdTXumIPvb2/mine/8a6aedcca07f63b4c9a
 
 # 서비스 시나리오
 
-배달의 민족 커버하기 - https://1sung.tistory.com/106
-
 기능적 요구사항
-1. 고객이 메뉴를 선택하여 주문한다
-1. 고객이 결제한다
-1. 주문이 되면 주문 내역이 입점상점주인에게 전달된다
-1. 상점주인이 확인하여 요리해서 배달 출발한다
-1. 고객이 주문을 취소할 수 있다
+1. 고객이 주문할 매장을 선택한다.
+2. 매장을 선택하는 시점에 주문카트가 생성된다.
+3. 해당 매장에서 주문 가능한 메뉴 리스트가 나온다.
+4. 메뉴를 골라서 카트에 담는다.
+5. 카트에 메뉴를 담으면서 금액이 계산된다.
+6. 결제하면 해당 매장에서 주문을 받는다.
+7. 결제하면 고객에게 포인트가 쌓인다.
+8. 포인트 양이 허들을 넘으면 등급이 오른다.
 1. 주문이 취소되면 배달이 취소된다
 1. 고객이 주문상태를 중간중간 조회한다
 1. 주문상태가 바뀔 때 마다 카톡으로 알림을 보낸다

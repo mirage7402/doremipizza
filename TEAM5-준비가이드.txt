@@ -1,0 +1,86 @@
+1. KAFKA RUN
+
+토픽 생성
+kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --zookeeper my-kafka-zookeeper:2181 --topic ipTVShopProject --create --partitions 1 --replication-factor 1
+현재 떠있는 토픽 조회
+kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --zookeeper my-kafka-zookeeper:2181 --list
+토픽 삭제
+kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --delete --zookeeper my-kafka-zookeeper:2181 --topic ipTVShopProject
+kubectl -n kafka exec my-kafka-0 -- /usr/bin/kafka-topics --delete --zookeeper my-kafka-zookeeper:2181 --topic order
+
+
+2. SIEGE 설치
+
+ 1) siege 설치
+ 
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: siege
+  namespace: default  
+spec:
+  containers:
+  - name: siege
+    image: apexacme/siege-nginx
+EOF
+
+ 2)siege가 설치된 POD에 들어가서 작업
+   kubectl exec -it siege --container siege -n default -- /bin/bash
+
+ 3) 부하발생 해보기
+   siege -c3 -t30S -v --content-type "application/json" 'http://ade05cb3a099a4cd2879ed9475f04e0b-1145656751.us-east-2.elb.amazonaws.com:8080/orders POST {"productId": "2030", "productName": "internet", "installationAddress": "Seoul", "customerId": "1", "orderDate": "20200715", "status": "JOINORDED"}'
+
+3. metric 서버 설치
+1) 설치명령
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+kubectl get deployment metrics-server -n kube-system
+
+2) 서비스 디플로이설정
+자원 리밋 설정
+kubectl apply -f https://k8s.io/examples/application/php-apache.yaml
+
+
+4 [ HPA 오토스케일링 ]
+kubectl autoscale deploy order --min=1 --max=10 --cpu-percent=1
+kubectl get deploy order -w
+kubectl get hpa -w
+kubectl delete hpa order 
+
+5. Circuit Breaker
+1) 이스티오 설치
+curl -L https://git.io/getLatestIstio | ISTIO_VERSION=1.4.3 sh -
+cd istio-1.4.3
+export PATH=$PWD/bin:$PATH
+for i in install/kubernetes/helm/istio-init/files/crd*yaml; do kubectl apply -f $i; done
+
+kubectl apply -f install/kubernetes/istio-demo.yaml
+
+2) 이스티오 설정
+
+cat <<EOF | kubectl apply -f -
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: installation
+spec:
+  host: installation
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 1           # 목적지로 가는 HTTP, TCP connection 최대 값. (Default 1024)
+      http:
+        http1MaxPendingRequests: 1  # 연결을 기다리는 request 수를 1개로 제한 (Default 
+        maxRequestsPerConnection: 1 # keep alive 기능 disable
+        maxRetries: 3               # 기다리는 동안 최대 재시도 수(Default 1024)
+    outlierDetection:
+      consecutiveErrors: 5          # 5xx 에러가 5번 발생하면
+      interval: 1s                  # 1초마다 스캔 하여
+      baseEjectionTime: 30s         # 30 초 동안 circuit breaking 처리   
+      maxEjectionPercent: 100       # 100% 로 차단
+EOF
+
+3) 서킷브레이커 테스트
+siege -c3 -t30S -v --content-type "application/json" 'http://ade05cb3a099a4cd2879ed9475f04e0b-1145656751.us-east-2.elb.amazonaws.com:8080/orders POST {"productId": "2030", "productName": "internet", "installationAddress": "Seoul", "customerId": "1", "orderDate": "20200715", "status": "JOINORDED"}'
+
+일정 수준이 되면.. 에러발생

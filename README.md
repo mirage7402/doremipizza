@@ -1,7 +1,7 @@
 ![image](https://user-images.githubusercontent.com/66579932/89150924-ab123b00-d59a-11ea-9d61-ee0d840921a8.jpg)
 
-# Pizza 주문판매 서비스
-5조의 주제는 Pizza주문 배송 서비스 입니다. 
+# Pizza 메뉴관리, 주문배송관리 서비스
+5조의 주제는 Pizza 메뉴관리 주문 배송 서비스 입니다. 
 
 # Table of contents
 

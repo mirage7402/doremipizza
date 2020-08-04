@@ -25,26 +25,22 @@
 # 서비스 시나리오
 
 기능적 요구사항
-1. 고객이 주문할 매장을 선택한다.
-2. 매장을 선택하는 시점에 주문카트가 생성된다.
-3. 해당 매장에서 주문 가능한 메뉴 리스트가 나온다.
-4. 메뉴를 골라서 카트에 담는다.
-5. 카트에 메뉴를 담으면서 금액이 계산된다.
-6. 결제하면 해당 매장에서 주문을 받는다.
-7. 결제하면 고객에게 포인트가 쌓인다.
-8. 포인트 양이 허들을 넘으면 등급이 오른다.
-9. 주문을 취소하면 결제가 취소된다.
-10. 주문이 취소되면 고객포인트가 내려가고, 허들 아래로 내려가면 등급이 down 된다.
-11. 매장에서 배송처리하면 주문이 종료된다.
+1. 상품 Manager가 매장별 판매할 상품을 선정한다. 
+2. 해당 매장에 Menu 변동에 대한 confir을 요청한다.
+3. Confirm된 Menu는 해당 매장에서 선태 가능한 Menu가 된다.
+4. 고객이 주문할 매장을 선택한다.
+5. 매장 선택 시점에 매장주문카트가 생성된다.
+6. 메뉴를 골라서 카트에 담는다.
+7. 주문완료처리하면 결제 시스템연동되어 결제수행된다.
+8. 결제완료되면 해당 매장에서 주문을 받는다.
+9. 매장에서 Pizza를 제작한다.
+10. Pizza가 배송되고 해당 건은 완료 처리된다.
 
 비기능적 요구사항
-1. 트랜잭션
-    1. 결제가 되어야만 매장에서 주문을 받는다.  Sync 호출 
-1. 장애격리
-    1. 고객 포인트, 등급향상에 상관없이 주문되어야 한다.  Async (event-driven), Eventual Consistency
-    2. 결제가 문제가 되면, 주문 카트에 담기를 잠시 후에 하도록 유도한다.  Circuit breaker
-1. 성능
-    1. 고객 주문의 배송상태를 확인할 수 있어야 한다  CQRS
+1. 트랜잭션:결제가 되어야만 매장에서 주문을 받는다. Sync 호출
+2. 장애격리: Menu처리 승인에 상관없이 Menu수정 요청을 할 수 있다. Async (event-driven), Eventual Consistency
+3. 주문이 밀리면 Menu승인 요청을 잠시후에 하도록 유도한다. Circuit breaker
+4. 성능:고객 주문의 배송상태를 확인할 수 있어야 한다 CQRS
 
 # 체크포인트
 
@@ -111,7 +107,7 @@
   ![image](https://user-images.githubusercontent.com/487999/79684144-2a893200-826a-11ea-9a01-79927d3a0107.png)
 
 ## TO-BE 조직 (Vertically-Aligned)
-  ![image](https://user-images.githubusercontent.com/66579932/89156654-0138ab80-d5a6-11ea-9351-0dac8046ef60.png)
+  ![image](https://user-images.githubusercontent.com/66579932/89254335-e0ca2900-d659-11ea-8480-ab0481808ab4.png)
 
 
 ## Event Storming 결과
@@ -119,25 +115,25 @@
 
 
 ### 이벤트 도출
-![image](https://user-images.githubusercontent.com/487999/79683604-47bc0180-8266-11ea-9212-7e88c9bf9911.png)
+![image](https://user-images.githubusercontent.com/66579932/89254361-f0497200-d659-11ea-8b5f-3a97426e8765.png)
 
 ### 부적격 이벤트 탈락
-![image](https://user-images.githubusercontent.com/487999/79683612-4b4f8880-8266-11ea-9519-7e084524a462.png)
+![image](https://user-images.githubusercontent.com/66579932/89254385-fc353400-d659-11ea-9cc7-a9b64cf55c2f.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
         - 주문시>메뉴카테고리선택됨, 주문시>메뉴검색됨 :  UI 의 이벤트이지, 업무적인 의미의 이벤트가 아니라서 제외
 
 ### 액터, 커맨드 부착하여 읽기 좋게
-![image](https://user-images.githubusercontent.com/487999/79683614-4ee30f80-8266-11ea-9a50-68cdff2dcc46.png)
+![image](https://user-images.githubusercontent.com/66579932/89254420-09522300-d65a-11ea-9640-d1cdb3a1f5e0.png)
 
 ### 어그리게잇으로 묶기
-![image](https://user-images.githubusercontent.com/487999/79683618-52769680-8266-11ea-9c21-48d6812444ba.png)
+![image](https://user-images.githubusercontent.com/66579932/89254448-1838d580-d65a-11ea-971a-c5de6d0df40f.png)
 
     - app의 Order, store 의 주문처리, 결제의 결제이력은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
 
 ### 바운디드 컨텍스트로 묶기
 
-![image](https://user-images.githubusercontent.com/487999/79683625-560a1d80-8266-11ea-9790-40d68a36d95d.png)
+![image](https://user-images.githubusercontent.com/66579932/89254476-2555c480-d65a-11ea-8e93-c2e8f799638f.png)
 
     - 도메인 서열 분리 
         - Core Domain:  app(front), store : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
@@ -146,21 +142,21 @@
 
 ### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
 
-![image](https://user-images.githubusercontent.com/487999/79683633-5aced180-8266-11ea-8f42-c769eb88dfb1.png)
+![image](https://user-images.githubusercontent.com/66579932/89254494-30a8f000-d65a-11ea-9503-f661da2926f4.png)
 
 ### 폴리시의 이동과 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
 
-![image](https://user-images.githubusercontent.com/487999/79683641-5f938580-8266-11ea-9fdb-4e80ff6642fe.png)
+![image](https://user-images.githubusercontent.com/66579932/89254527-3f8fa280-d65a-11ea-9700-7d9da083af5d.png)
 
 ### 완성된 1차 모형
 
-![image](https://user-images.githubusercontent.com/487999/79683646-63bfa300-8266-11ea-9bc5-c0b650507ac8.png)
+![image](https://user-images.githubusercontent.com/66579932/89254557-58985380-d65a-11ea-9c10-c95955de7a73.png)
 
     - View Model 추가
 
 ### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
-![image](https://user-images.githubusercontent.com/487999/79684167-3ecd2f00-826a-11ea-806a-957362d197e3.png)
+![image](https://user-images.githubusercontent.com/66579932/89254566-651cac00-d65a-11ea-89c6-e091097462c3.png)
 
     - 고객이 메뉴를 선택하여 주문한다 (ok)
     - 고객이 결제한다 (ok)

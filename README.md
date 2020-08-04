@@ -113,64 +113,30 @@
 
 
 ![image](https://user-images.githubusercontent.com/66579932/89254361-f0497200-d659-11ea-8b5f-3a97426e8765.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254385-fc353400-d659-11ea-9cc7-a9b64cf55c2f.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254420-09522300-d65a-11ea-9640-d1cdb3a1f5e0.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254448-1838d580-d65a-11ea-971a-c5de6d0df40f.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254476-2555c480-d65a-11ea-8e93-c2e8f799638f.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254494-30a8f000-d65a-11ea-9503-f661da2926f4.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254527-3f8fa280-d65a-11ea-9700-7d9da083af5d.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254557-58985380-d65a-11ea-9c10-c95955de7a73.png)
-
+#
 ![image](https://user-images.githubusercontent.com/66579932/89254566-651cac00-d65a-11ea-89c6-e091097462c3.png)
-
-    - 고객이 메뉴를 선택하여 주문한다 (ok)
-    - 고객이 결제한다 (ok)
-    - 주문이 되면 주문 내역이 입점상점주인에게 전달된다 (ok)
-    - 상점주인이 확인하여 요리해서 배달 출발한다 (ok)
-
-![image](https://user-images.githubusercontent.com/487999/79684170-47256a00-826a-11ea-9777-e16fafff519a.png)
-    - 고객이 주문을 취소할 수 있다 (ok)
-    - 주문이 취소되면 배달이 취소된다 (ok)
-    - 고객이 주문상태를 중간중간 조회한다 (View-green sticker 의 추가로 ok) 
-    - 주문상태가 바뀔 때 마다 카톡으로 알림을 보낸다 (?)
-
-
-### 모델 수정
-
-![image](https://user-images.githubusercontent.com/487999/79684176-4e4c7800-826a-11ea-8deb-b7b053e5d7c6.png)
-    
-    - 수정된 모델은 모든 요구사항을 커버함.
-
-### 비기능 요구사항에 대한 검증
-
-![image](https://user-images.githubusercontent.com/487999/79684184-5c9a9400-826a-11ea-8d87-2ed1e44f4562.png)
-
-    - 마이크로 서비스를 넘나드는 시나리오에 대한 트랜잭션 처리
-        - 고객 주문시 결제처리:  결제가 완료되지 않은 주문은 절대 받지 않는다는 경영자의 오랜 신념(?) 에 따라, ACID 트랜잭션 적용. 주문와료시 결제처리에 대해서는 Request-Response 방식 처리
-        - 결제 완료시 점주연결 및 배송처리:  App(front) 에서 Store 마이크로서비스로 주문요청이 전달되는 과정에 있어서 Store 마이크로 서비스가 별도의 배포주기를 가지기 때문에 Eventual Consistency 방식으로 트랜잭션 처리함.
-        - 나머지 모든 inter-microservice 트랜잭션: 주문상태, 배달상태 등 모든 이벤트에 대해 카톡을 처리하는 등, 데이터 일관성의 시점이 크리티컬하지 않은 모든 경우가 대부분이라 판단, Eventual Consistency 를 기본으로 채택함.
-
 
 
 
 ## 헥사고날 아키텍처 다이어그램 도출
     
-![image](https://user-images.githubusercontent.com/487999/79684772-eba9ab00-826e-11ea-9405-17e2bf39ec76.png)
-
-
-    - Chris Richardson, MSA Patterns 참고하여 Inbound adaptor와 Outbound adaptor를 구분함
-    - 호출관계에서 PubSub 과 Req/Resp 를 구분함
-    - 서브 도메인과 바운디드 컨텍스트의 분리:  각 팀의 KPI 별로 아래와 같이 관심 구현 스토리를 나눠가짐
-
+![image](https://user-images.githubusercontent.com/66579932/89254581-6fd74100-d65a-11ea-9157-beec9defd486.png)
 
 # 구현:
 

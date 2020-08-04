@@ -45,8 +45,6 @@
 # 체크포인트
 
 - 분석 설계
-
-
   - 이벤트스토밍: 
     - 스티커 색상별 객체의 의미를 제대로 이해하여 헥사고날 아키텍처와의 연계 설계에 적절히 반영하고 있는가?
     - 각 도메인 이벤트가 의미있는 수준으로 정의되었는가?
@@ -106,7 +104,7 @@
 ## AS-IS 조직 (Horizontally-Aligned)
   ![image](https://user-images.githubusercontent.com/487999/79684144-2a893200-826a-11ea-9a01-79927d3a0107.png)
 
-## TO-BE 조직 (Vertically-Aligned)
+## TO-BE 조직
   ![image](https://user-images.githubusercontent.com/66579932/89254335-e0ca2900-d659-11ea-8480-ab0481808ab4.png)
 
 
@@ -114,47 +112,23 @@
 * MSAEz 로 모델링한 이벤트스토밍 결과:  http://msaez.io/#/storming/nZJ2QhwVc4NlVJPbtTkZ8x9jclF2/every/a77281d704710b0c2e6a823b6e6d973a/-M5AV2z--su_i4BfQfeF
 
 
-### 이벤트 도출
 ![image](https://user-images.githubusercontent.com/66579932/89254361-f0497200-d659-11ea-8b5f-3a97426e8765.png)
 
-### 부적격 이벤트 탈락
 ![image](https://user-images.githubusercontent.com/66579932/89254385-fc353400-d659-11ea-9cc7-a9b64cf55c2f.png)
 
     - 과정중 도출된 잘못된 도메인 이벤트들을 걸러내는 작업을 수행함
-        - 주문시>메뉴카테고리선택됨, 주문시>메뉴검색됨 :  UI 의 이벤트이지, 업무적인 의미의 이벤트가 아니라서 제외
 
-### 액터, 커맨드 부착하여 읽기 좋게
 ![image](https://user-images.githubusercontent.com/66579932/89254420-09522300-d65a-11ea-9640-d1cdb3a1f5e0.png)
 
-### 어그리게잇으로 묶기
 ![image](https://user-images.githubusercontent.com/66579932/89254448-1838d580-d65a-11ea-971a-c5de6d0df40f.png)
-
-    - app의 Order, store 의 주문처리, 결제의 결제이력은 그와 연결된 command 와 event 들에 의하여 트랜잭션이 유지되어야 하는 단위로 그들 끼리 묶어줌
-
-### 바운디드 컨텍스트로 묶기
 
 ![image](https://user-images.githubusercontent.com/66579932/89254476-2555c480-d65a-11ea-8e93-c2e8f799638f.png)
 
-    - 도메인 서열 분리 
-        - Core Domain:  app(front), store : 없어서는 안될 핵심 서비스이며, 연견 Up-time SLA 수준을 99.999% 목표, 배포주기는 app 의 경우 1주일 1회 미만, store 의 경우 1개월 1회 미만
-        - Supporting Domain:   marketing, customer : 경쟁력을 내기위한 서비스이며, SLA 수준은 연간 60% 이상 uptime 목표, 배포주기는 각 팀의 자율이나 표준 스프린트 주기가 1주일 이므로 1주일 1회 이상을 기준으로 함.
-        - General Domain:   pay : 결제서비스로 3rd Party 외부 서비스를 사용하는 것이 경쟁력이 높음 (핑크색으로 이후 전환할 예정)
-
-### 폴리시 부착 (괄호는 수행주체, 폴리시 부착을 둘째단계에서 해놔도 상관 없음. 전체 연계가 초기에 드러남)
-
 ![image](https://user-images.githubusercontent.com/66579932/89254494-30a8f000-d65a-11ea-9503-f661da2926f4.png)
-
-### 폴리시의 이동과 컨텍스트 매핑 (점선은 Pub/Sub, 실선은 Req/Resp)
 
 ![image](https://user-images.githubusercontent.com/66579932/89254527-3f8fa280-d65a-11ea-9700-7d9da083af5d.png)
 
-### 완성된 1차 모형
-
 ![image](https://user-images.githubusercontent.com/66579932/89254557-58985380-d65a-11ea-9c10-c95955de7a73.png)
-
-    - View Model 추가
-
-### 1차 완성본에 대한 기능적/비기능적 요구사항을 커버하는지 검증
 
 ![image](https://user-images.githubusercontent.com/66579932/89254566-651cac00-d65a-11ea-89c6-e091097462c3.png)
 
